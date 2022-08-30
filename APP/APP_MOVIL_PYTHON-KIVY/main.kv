@@ -1,0 +1,475 @@
+#:kivy 2.1.0
+#:import NoTransition kivy.uix.screenmanager.NoTransition
+#:import RiseInTransition kivy.uix.screenmanager.RiseInTransition
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+
+
+#===CONTENIDO DE LA BARRA DE NAVEGACION============
+<ContentNavigationDrawer>:
+    orientation: "vertical"
+    MDBoxLayout:
+        halign: "center"
+        size_hint: 1, .6
+        Image:
+            source: "img/fondo.jpg"
+            allow_stretch: True
+            keep_ratio: False
+
+    ScrollView:
+        MDList:
+            OneLineIconListItem:
+                text: "Inicio"
+                on_release:
+                    root.nav_drawer.set_state("close")
+                    app.root.current = "primera_pagina"
+                IconLeftWidget:
+                    icon: "home"
+
+            OneLineIconListItem:
+                text: "Luz"
+                on_release:
+                    root.nav_drawer.set_state("close")
+                    app.root.transition = SlideTransition(direction='left')
+                    app.root.current = "pagina_luz"
+                IconLeftWidget:
+                    icon: "lightbulb"
+
+            OneLineIconListItem:
+                text: "Sonido"
+                on_release:
+                    root.nav_drawer.set_state("close")
+                    app.root.transition = SlideTransition(direction='left')
+                    app.root.current = "pagina_sonido"
+                IconLeftWidget:
+                    icon: "volume-high"
+
+            OneLineIconListItem:
+                text: "Camara"
+                on_release:
+                    root.nav_drawer.set_state("close")
+                    app.root.transition = SlideTransition(direction='left')
+                    app.root.current = "pagina_camara"
+                IconLeftWidget:
+                    icon: "cctv"
+
+            OneLineIconListItem:
+                text: "Opciones"
+                on_release:
+                    root.nav_drawer.set_state("close")
+                    app.root.transition = SlideTransition(direction='left')
+                    app.root.current = "pagina_config"
+                IconLeftWidget:
+                    icon: "cog"
+
+#===CARTAS PAGINA PRINCIPAL============
+<ElementCard@MDCard>:
+    radius: "10dp"
+    spacing: "10dp"
+    padding: '10dp'
+    line_color: 0.53, 0.165, 0.165, 1
+    image: ''
+    text: ''
+    orientation: "vertical"
+    ripple_behavior: True
+    on_release:
+        app.root.transition = RiseInTransition()
+    Image:
+        source: root.image
+        halign: "center"
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1, .3
+        MDLabel:
+            text: root.text
+            halign: 'center'
+
+#===CARTAS OTRAS PAGINAS============
+<PaginasCard@MDCard>:
+    radius: "10dp"
+    spacing: "10dp"
+    padding: '10dp'
+    line_color: 0.53, 0.165, 0.165, 1
+    image: ''
+    text: ''
+    orientation: "horizontal"
+    on_release:
+        app.root.transition = RiseInTransition()
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 0.4,1
+        MDLabel:
+            text: root.text
+            halign: 'left'
+
+#============PAGINA CONTROL LUZ================
+<LuzScreen@MDBoxLayout>:
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1,.86
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: ["10dp","10dp","10dp","10dp"]
+            spacing: '10dp'
+
+            PaginasCard:
+                text: 'Estado del foco'
+                padding: '30dp'
+
+                Switch:
+                    activate:True
+                    font_size:30
+                    on_activate:root.switch_click(self,self.activate)
+
+            PaginasCard:
+                text: 'Intensidad de Luz'
+                padding: '30dp'
+                on_release:
+                    root.current = "sonido"
+
+#==============PAGINA CONTROL SONIDO=========
+<SonidoScreen@MDBoxLayout>:
+    MDBoxLayout:
+        orientation: "vertical"
+        size_hint: 1,.86
+        MDBoxLayout:
+            orientation: "vertical"
+            padding: ["10dp","10dp","10dp","10dp"]
+            spacing: '10dp'
+
+            PaginasCard:
+                text: 'Volumen \n Alarma'
+                padding: '30dp'
+                MDBoxLayout:
+                    orientation: "horizontal"
+                    MDSlider:
+                        size_hint: 0.85,1
+                        min: 0
+                        max: 100
+                        value: 40
+                    MDIcon:
+                        size_hint: 0.15,1
+                        icon: 'volume-high'
+                        halign: 'left'
+
+            PaginasCard:
+                text: 'Tono de Alarma'
+                padding: '30dp'
+                on_release:
+                    root.current = "sonido"
+
+#==============PAGINA CONFIGURACION=========
+<ConfiguracionScreen@MDBoxLayout>:
+    MDBoxLayout:
+        orientation: "vertical"
+        spacing: "10dp"
+        MDBoxLayout:
+            padding: '20dp'
+            spacing: "10dp"
+            MDLabel:
+                text: "Cambio del tema"
+                pos_hint: {'left': 1}
+            MDSwitch:
+                pos_hint: {'center_y': 0.5}
+                on_active:
+                    app.change_style(*args)
+        MDBoxLayout:
+            orientation: "vertical"
+
+#===PAGINA PRINCIPAL============
+<MainPage>:
+    MDScreen:
+        name: "primera_pagina"
+        MDToolbar:
+            title: "Sistema de Seguridad"
+            pos_hint: {"top": 1}
+            elevation: 10
+            left_action_items:
+                [['menu', lambda x: nav_drawer.set_state("open")]]
+
+        MDGridLayout:
+            cols:2
+            site_hint: 1,.8
+            padding: ['10dp','80dp','10dp','10dp']
+            spacing: "10dp"
+            ElementCard:
+                text: 'Control de Luz'
+                image: "img/luz-icono.jpg"
+                on_release:
+                    root.current= "pagina_luz"
+            ElementCard:
+                text: 'Control de Sonido'
+                image:"img/sonido-del-altavoz-icono.jpg"
+                on_release:
+                    root.current= "pagina_sonido"
+            ElementCard:
+                text: 'Camara'
+                image:"img/camara.jpg"
+                on_release:
+                    root.current= "pagina_camara"
+            ElementCard:
+                text: 'Opciones'
+                image:"img/configuracion.png"
+                on_release:
+                    root.current= "pagina_config"
+
+        MDNavigationDrawer:
+            id: nav_drawer
+            ContentNavigationDrawer:
+                nav_drawer: nav_drawer
+
+#===PAGINAS SECUNDARIAS============
+    MDScreen:
+        name: "pagina_luz"
+        MDToolbar:
+            title: "Luz"
+            pos_hint: {"top": 1}
+            elevation: 10
+            left_action_items:
+                [['arrow-left', lambda x: app.go_home()]]
+        LuzScreen:
+            name: "Sistema de Iluminacion"
+
+    MDScreen:
+        name: "pagina_sonido"
+        MDToolbar:
+            title: "Sonido"
+            pos_hint: {"top": 1}
+            elevation: 10
+            left_action_items:
+                [['arrow-left', lambda x: app.go_home()]]
+        SonidoScreen:
+            name: "Sistema de Sonido"
+
+    MDScreen:
+        name: "pagina_camara"
+        MDToolbar:
+            title: "Camara"
+            pos_hint: {"top": 1}
+            elevation: 10
+            left_action_items:
+                [['arrow-left', lambda x: app.go_home()]]
+
+    MDScreen:
+        name: "pagina_config"
+        MDToolbar:
+            title: "Configuracion"
+            pos_hint: {"top": 1}
+            elevation: 10
+            left_action_items:
+                [['arrow-left', lambda x: app.go_home()]]
+        ConfiguracionScreen:
+            name: "Config"
+
+
+            # ScreenManager:
+            #     id: screen_manager
+            #     Screen:
+            #         name: "screen1"
+            #         MDLabel:
+            #             text: "Screen1"
+            #             halign: "center"
+# <MainWid>:
+#     Screen:
+#         MDToolbar:
+#             pos_hint: {"top": 1}
+#             title: "Sistema de Seguridad"
+#             elevation: 10
+#             left_action_items:
+#                 [['menu', lambda x: nav_drawer.set_state("open")]]
+#         MDNavigationDrawer:
+#             id: nav_drawer
+#             ContentNavigationDrawer:
+#                 manager: screen_manager
+#                 nav_drawer: nav_drawer
+
+#         MDNavigationLayout:
+#             ScreenManager:
+#                 id: screen_manager
+#                 Screen:
+#                     name: "Luz"
+#                     MDLabel:
+#                         text: "this a screen 1"
+#                         halign: "center"
+
+
+
+# #===OTRAS PAGINAS============
+# <PaginasCard@MDCard>:
+#     radius: "10dp"
+#     spacing: "10dp"
+#     padding: '10dp'
+#     image: ''
+#     text: ''
+#     orientation: "horizontal"
+#     on_release:
+#         app.root.transition = RiseInTransition()
+#     MDBoxLayout:
+#         orientation: "vertical"
+#         size_hint: 0.4,1
+#         MDLabel:
+#             text: root.text
+#             halign: 'left'
+
+# #==============PAGINA CONTROL SONIDO=========
+# <SonidoScreen@MDBoxLayout>:
+#     text:''
+#     MDBoxLayout:
+#         orientation: "vertical"
+#         MDBoxLayout:
+#             orientation: "vertical"
+#             size_hint: 1, .2
+#             padding: '10dp'
+#             MDCard:
+#                 radius: '10dp'
+#                 padding: '10dp'
+#                 line_color: 1,0,1,1
+
+#                 MDLabel:
+#                     font_style: 'H5'
+#                     text: root.text
+#                     halign: 'center'
+#                     pos_hint: {'center_y': 0.5}
+
+#         MDBoxLayout:
+#             orientation: "vertical"
+#             size_hint: 1,.8
+#             padding: ["10dp","10dp","10dp","10dp"]
+#             spacing: '10dp'
+
+#             PaginasCard:
+#                 text: 'Volumen \n Alarma'
+#                 padding: '30dp'
+#                 MDBoxLayout:
+#                     orientation: "horizontal"
+#                     MDSlider:
+#                         size_hint: 0.85,1
+#                         min: 0
+#                         max: 100
+#                         value: 40
+#                     MDIcon:
+#                         size_hint: 0.15,1
+#                         icon: 'volume-high'
+#                         halign: 'left'
+
+#             PaginasCard:
+#                 text: 'Tono de Alarma'
+#                 padding: '30dp'
+#                 on_release:
+#                     root.current = "sonido"
+
+#             MDFillRoundFlatButton:
+#                 text: 'REGRESAR'
+#                 pos_hint: {'center_x': .5}
+#                 on_release:
+#                     app.root.current = "principal"
+#                     app.root.transition = SlideTransition(direction= 'left')
+
+# #============PAGINA CONTROL LUZ================
+# <LuzScreen@MDBoxLayout>:
+#     text:''
+#     MDBoxLayout:
+#         orientation: "vertical"
+#         MDBoxLayout:
+#             orientation: "vertical"
+#             size_hint: 1, .2
+#             padding: '10dp'
+#             MDCard:
+#                 radius: '10dp'
+#                 padding: '10dp'
+#                 line_color: 1,0,1,1
+
+#                 MDLabel:
+#                     font_style: 'H5'
+#                     text: root.text
+#                     halign: 'center'
+#                     pos_hint: {'center_y': 0.5}
+
+#         MDBoxLayout:
+#             orientation: "vertical"
+#             size_hint: 1,.8
+#             padding: ["10dp","10dp","10dp","10dp"]
+#             spacing: '10dp'
+
+#             PaginasCard:
+#                 text: 'Estado del foco'
+#                 padding: '30dp'
+
+#                 Switch:
+#                     activate:True
+#                     font_size:30
+#                     on_activate:root.switch_click(self,self.activate)
+
+#             PaginasCard:
+#                 text: 'Intensidad de Luz'
+#                 padding: '30dp'
+#                 on_release:
+#                     root.current = "sonido"
+
+#             MDFillRoundFlatButton:
+#                 text: 'REGRESAR'
+#                 pos_hint: {'center_x': .5}
+#                 on_release:
+#                     app.root.current = "principal"
+#                     app.root.transition = SlideTransition(direction='left')
+
+
+# #==========PAGINA INICIAL===========
+# <MainWid>:
+#     MDScreen:
+#         name: "principal"
+#         md_bg_color: 0,.5,.5,1
+#         MDToolbar:
+#             title:'Barra de prueba'
+#         MDBoxLayout:
+#             orientation: "vertical"
+#             MDBoxLayout:
+#                 orientation: "horizontal"
+#                 size_hint: 1, .2
+#                 padding: '10dp'
+
+#                 MDCard:
+#                     radius: '10dp'
+#                     padding: '10dp'
+#                     line_color: 1,0,1,1
+
+#                     MDLabel:
+#                         text: "SISTEMA DE SEGURIDAD"
+#                         halign: 'center'
+#                         font_style: 'H5'
+#                         pos_hint: {'center_y': 0.5}
+#                     MDSwitch:
+#                         pos_hint: {'center_y': 0.5}
+#                         on_active:
+#                             app.change_style(*args)
+
+#             MDBoxLayout:
+#                 orientation: "vertical"
+#                 size_hint: 1,.8
+#                 padding: ["10dp","10dp","10dp","10dp"]
+#                 spacing: '10dp'
+
+#                 ElementCard:
+#                     text: 'Control de Luz'
+#                     padding: '30dp'
+#                     image: "img/luz-icono.png"
+#                     on_release:
+#                         root.current = "luz"
+
+#                 ElementCard:
+#                     text: 'Control de Sonido'
+#                     padding: '30dp'
+#                     image: "img/sonido-del-altavoz-icono.jpg"
+#                     on_release:
+#                         root.current = "sonido"
+
+#     MDScreen:
+#         name: 'luz'
+#         md_bg_color: 0,.5,.5,1
+#         LuzScreen:
+#             text: "Sistema de Iluminacion"
+
+#     MDScreen:
+#         name: 'sonido'
+#         md_bg_color: 0,.5,.5,1
+#         SonidoScreen:
+#             text: "Sistema de Sonido"
